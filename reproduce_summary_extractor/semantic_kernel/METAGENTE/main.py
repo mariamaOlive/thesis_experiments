@@ -1,5 +1,6 @@
 import pandas as pd
 from optimizer.parallel_optimizer import ParallelOptimizer
+import asyncio
 
 
 class Main:
@@ -12,7 +13,7 @@ class Main:
         train_data = pd.read_csv("data/train_data.csv").to_dict(orient="records")
 
         optimizer = ParallelOptimizer(self.threshold)
-        optimizer.run(self.num_iterations, train_data)
+        asyncio.run(optimizer.run(self.num_iterations, train_data))
 
 
 if __name__ == "__main__":

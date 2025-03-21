@@ -2,13 +2,13 @@ import re
 from string import Template
 
 from prompt.prompt import TEACHER_PROMPT
-from utils.chat_provider import KernelProvider
-from utils.openai_kernel_provider import OpenAIChatProvider
+from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
 
 
 class TeacherAgent:
     def __init__(self):
-        self.llm: KernelProvider = OpenAIChatProvider(model="gpt-4o",  temperature=0.7)
+        # self.llm = OpenAIChatProvider(model="gpt-4o")
+        self.llm = OllamaChatProvider(model="llama3.2")
 
     def _build_prompt(
         self,
@@ -48,7 +48,7 @@ class TeacherAgent:
         prompt = self._build_prompt(
             extracted_text, description, generated_about, rouge_score, summarizer_prompt
         )
-        answer = await self.llm.run(prompt)
+        answer = await self.llm.run(prompt, temperature=0.7)
 
         # print(f"Teacher raw answer: {answer}")
 

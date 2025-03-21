@@ -1,11 +1,11 @@
 from string import Template
-from utils.chat_provider import KernelProvider
-from utils.openai_kernel_provider import OpenAIChatProvider
+from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
 
 
 class ExtractorAgent:
     def __init__(self):
-        self.llm: KernelProvider = OpenAIChatProvider(model="gpt-4o-mini",  temperature=0)
+        # self.llm = OpenAIChatProvider(model="gpt-4o-mini")
+        self.llm = OllamaChatProvider(model="llama3.2")
 
     def _build_prompt(self, prompt: str, readme_text: str) -> str:
         prompt = Template(prompt)
@@ -14,5 +14,5 @@ class ExtractorAgent:
 
     async def run(self, prompt: str, readme_text: str) -> str:
         prompt = self._build_prompt(prompt, readme_text)
-        extracted_text = await self.llm.run(prompt)
+        extracted_text = await self.llm.run(prompt,  temperature=0)
         return extracted_text

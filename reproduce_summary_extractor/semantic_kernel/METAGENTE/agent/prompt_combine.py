@@ -2,13 +2,13 @@ import re
 from string import Template
 
 from prompt.prompt import COMBINE_PROMPT
-from utils.chat_provider import KernelProvider
-from utils.openai_kernel_provider import OpenAIChatProvider
+from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
 
 
 class PromptCombineAgent:
     def __init__(self):
-        self.llm: KernelProvider = OpenAIChatProvider(model="gpt-4o",  temperature=0.2)
+        # self.llm = OpenAIChatProvider(model="gpt-4o")
+        self.llm = OllamaChatProvider(model="llama3.2")
 
     def _build_prompt(self, summarizer_list: str) -> str:
         prompt = Template(COMBINE_PROMPT)
@@ -33,7 +33,7 @@ class PromptCombineAgent:
     async def run(self, prompt_list: list) -> tuple[str, str]:
         summarizer_list = self._clean_prompt_list(prompt_list)
         prompt = self._build_prompt(summarizer_list=summarizer_list)
-        answer = await self.llm.run(prompt)
+        answer = await self.llm.run(prompt, temperature=0.2)
 
         print(f"Prompt Combine raw answer: {answer}")
 

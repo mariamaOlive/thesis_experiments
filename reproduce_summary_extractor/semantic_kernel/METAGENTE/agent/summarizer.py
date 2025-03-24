@@ -4,8 +4,8 @@ from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
 
 class SummarizerAgent:
     def __init__(self):
-        # self.llm = OpenAIChatProvider(model="gpt-4o-mini")
-        self.llm = OllamaChatProvider(model="llama3.2")
+        self.llm = OpenAIChatProvider(model="gpt-4o-mini")
+        # self.llm = OllamaChatProvider(model="llama3.2")
 
     def _build_prompt(self, prompt: str, extracted_text: str) -> str:
         prompt = Template(prompt)

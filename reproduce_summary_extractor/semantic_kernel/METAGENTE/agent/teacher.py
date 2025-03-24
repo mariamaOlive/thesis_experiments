@@ -7,8 +7,8 @@ from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
 
 class TeacherAgent:
     def __init__(self):
-        # self.llm = OpenAIChatProvider(model="gpt-4o")
-        self.llm = OllamaChatProvider(model="llama3.2")
+        self.llm = OpenAIChatProvider(model="gpt-4o")
+        # self.llm = OllamaChatProvider(model="llama3.2")
 
     def _build_prompt(
         self,

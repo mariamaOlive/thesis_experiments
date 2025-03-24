@@ -25,16 +25,15 @@ class ParallelOptimizer:
 
     async def run(self, max_iterations: int, train_data: list[dict]):
         
-        
-        # Load the initial prompt created for the experiment
-        self.summarizer_prompt = INITIAL_SUMMARIZER_PROMPT  ## CHECK: I put this outside because it was reinitializing every iteration, so should each iteraction not remember previous loop 
-        
         # Store different prompt from the interactions
         data_prompt = [] ## CHECK: The way that is now stores the one that reached the rouge threshold
         data_prompt.append(self.summarizer_prompt) ## CHECK: I added the initial prompt 
         
-        for i, data in enumerate(train_data):            
+        for i, data in enumerate(train_data):   
             
+            # Load the initial prompt created for the experiment
+            self.summarizer_prompt = INITIAL_SUMMARIZER_PROMPT  ## CHECK: Should I put this outside because it is reinitializing every iteration, so should each iteraction not remember previous loop 
+        
             # Ground truth value
             description = data["description"]
             # Readme value
@@ -100,9 +99,9 @@ class ParallelOptimizer:
             print(f"Final Result:\nSummarizer Prompt: {self.summarizer_prompt}")
 
             print("#############################################\n\n")
-   
-            # if i==2:
-            #     break
+
+            if i==0:
+                break
             
             print(f"Length data_prompt: {len(data_prompt)}")
             

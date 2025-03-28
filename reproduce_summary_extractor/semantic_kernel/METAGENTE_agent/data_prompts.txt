@@ -1,7 +1,6 @@
+Summarize the following extracted text from a Github repository README into a short term/phrase introducing the repository:
+            
+            The output should include only a short term/phrase introducing the repository.
+Summarize the following extracted text from a Github repository README into a short term/phrase introducing the repository:
 
-You initial prompt is: 
-<PROMPT> Your goal is to summarize an extracted text from a Github repository README into a short term/phrase introducing the repository.</PROMPT>
-
-Execute initially this prompt for the README given as an input, but for the other interaction utilize the prompt provided by the Teacher.
-The output should include: The used prompt between <PROMPT></PROMPT> and the short term/phrase introducing the repository between <GENERATED_DESCRIPTION><GENERATED_DESCRIPTION/>
-
+The output should include only a short term/phrase introducing the repository.

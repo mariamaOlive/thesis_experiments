@@ -10,6 +10,9 @@ class ExtractorAgent:
     def _build_prompt(self, prompt: str, readme_text: str) -> str:
         prompt = Template(prompt)
         prompt = prompt.substitute(readme_text=readme_text)
+        print("############################")
+        print(prompt)
+        print("############################")
         return prompt
 
     async def run(self, prompt: str, readme_text: str) -> str:

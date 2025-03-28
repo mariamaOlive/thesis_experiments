@@ -100,8 +100,8 @@ class ParallelOptimizer:
 
             print("#############################################\n\n")
 
-            if i==0:
-                break
+            # if i==0:
+            #     break
             
             print(f"Length data_prompt: {len(data_prompt)}")
             

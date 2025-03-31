@@ -6,11 +6,11 @@ from .base_agent import BaseAgentCreator
 class ExtractorAgent(BaseAgentCreator):
     """Agent for extracting information based on a prompt template."""
 
-    def __init__(self):
+    def __init__(self, name):
         """Initializes the ExtractorAgent with specific settings."""
-        super().__init__() 
+        super().__init__(name) 
         self.settings = OpenAIChatPromptExecutionSettings(
-            service_id="extractor",
+            service_id=name,
             ai_model_id="gpt-4o-mini",
             temperature=0,
         )
@@ -20,13 +20,13 @@ class ExtractorAgent(BaseAgentCreator):
         # Create instruction  prompt
         prompt_template = self._prompt_template(file_path)
         # Add chat completion to kernel
-        self._add_chat_completion_kernel("extractor")
+        self._add_chat_completion_kernel(self.name)
         # Create Agent
-        agent_extractor = ChatCompletionAgent(
+        agent = ChatCompletionAgent(
             kernel=self.kernel,
-            name="extractor",
+            name=self.name,
             prompt_template_config=prompt_template,
             arguments=KernelArguments(settings=self.settings),
         )
-        return agent_extractor
+        return agent
     

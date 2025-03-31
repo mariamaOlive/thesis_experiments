@@ -3,8 +3,8 @@ from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAICh
 from semantic_kernel.functions import KernelArguments
 from .base_agent import BaseAgentCreator 
 
-class SummarizerAgent(BaseAgentCreator):
-    """Agent for extracting information based on a prompt template."""
+class EvaluatorAgent(BaseAgentCreator):
+    """Agent for evaluating the result of the summarizer."""
 
     def __init__(self, name):
         """Initializes the Agent with specific settings."""
@@ -15,7 +15,7 @@ class SummarizerAgent(BaseAgentCreator):
             temperature=0,
         )
 
-    def create_agent(self, file_path: str, extracted_text: str) -> ChatCompletionAgent:
+    def create_agent(self, file_path: str, ground_truth: str) -> ChatCompletionAgent:
         """Creates a ChatCompletionAgent for extraction."""
         # Create instruction  prompt
         prompt_template = self._prompt_template(file_path)
@@ -26,6 +26,6 @@ class SummarizerAgent(BaseAgentCreator):
             kernel=self.kernel,
             name=self.name,
             prompt_template_config=prompt_template,
-            arguments=KernelArguments(extracted_text=extracted_text, settings= self.settings),
+            arguments=KernelArguments(ground_truth=ground_truth, settings= self.settings),
         )
         return agent

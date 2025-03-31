@@ -7,8 +7,9 @@ import yaml
 class BaseAgentCreator:
     """Base class for creating agents with common kernel and prompt template setup."""
 
-    def __init__(self):
+    def __init__(self, name):
         """Initializes the agent creator with a kernel and service."""
+        self.name = name
         self.kernel = Kernel()
 
     def _add_chat_completion_kernel(self, service_id: str) -> Kernel:

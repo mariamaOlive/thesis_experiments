@@ -57,10 +57,10 @@ class ThresholdTerminationStrategy(TerminationStrategy):
             return False
 
 
-
 class ParallelOptimizer:
     def __init__(self, threshold: float = 0.7):
         self.EXTRACTOR_TEMPLATE_FILE = "template/extractor.yaml"
+        self.SUMMARIZER_TEMPLATE_FILE = "template/summarizer.yaml"
         self.summarizer_prompt = INITIAL_SUMMARIZER_PROMPT
         self.extractor_agent = ExtractorAgent()
         self.summarizer_agent = SummarizerAgent()
@@ -102,9 +102,17 @@ class ParallelOptimizer:
             print(f"Extracted text: {extracted_text}")
             
             
+            # Create Agent Summarizer
+            summarizer_agent_handler =  SummarizerAgent()
+            summarizer_agent = summarizer_agent_handler.create_agent(self.SUMMARIZER_TEMPLATE_FILE, extracted_text)
+            summarizer_agent_handler.add_plugin_kernel("prompt_plugin", prompt_plugin)
+            
+            # Create Agent Evaluator 
+            
+            # Create Agent Teacher
             
             ########## BEGINNING: Agent Framework - Summarizer and Teacher ##########
-            SUMMARIZER_NAME = "Summarizer"
+            SUMMARIZER_NAME = "summarizer"
             TEACHER_NAME = "Teacher"
             EVALUATOR_NAME = "Evaluator"
             kernel = self._create_kernel_with_chat_completion("kernel_loop")
@@ -119,37 +127,7 @@ class ParallelOptimizer:
             kernel.add_plugin(rouge, plugin_name= "rouge_plugin")
             kernel.add_plugin(prompt_plugin, plugin_name= "prompt_plugin")
             
-            
-            SUMMARIZER_INSTRUCTIONS = f"""
-            You are the Summarizer. Your only responsibility is to perform the most recent instruction given in the chat. 
 
-            Retrieve the summarization instruction from the last message in the chat.
-
-            <EXTRACTED_README>
-            {extracted_text}
-            </EXTRACTED_README>
-
-            Read the instruction and the extracted README text carefully.
-            Important:
-            - Do not evaluate the quality of your output, make changes to the instruction, or initiate new prompts. Simply read the extracted README text and apply the latest instructions.
-            - Output only a short term or phrase that introduces the repository — do not include any explanation or formatting.
-            - Do not calculate the ROUGE score.
-            - Update the most recently generated summary using the output and the last instructions with the last message in the chat.  
-            """
-            
-            
-            kernel_summarizer = Kernel()
-            kernel_summarizer.add_service(OpenAIChatCompletion(service_id=SUMMARIZER_NAME, ai_model_id="gpt-4o-mini"))
-            kernel_summarizer.add_plugin(prompt_plugin, plugin_name= "prompt_plugin")
-
-
-            agent_summarizer = ChatCompletionAgent(
-                    kernel=kernel_summarizer,
-                    name=SUMMARIZER_NAME,
-                    instructions=SUMMARIZER_INSTRUCTIONS,
-                    
-                    # arguments=KernelArguments(settings = settings_summarizer)
-            )
             
             
             EVALUATOR_INSTRUCTIONS = f"""
@@ -283,9 +261,9 @@ class ParallelOptimizer:
             history_reducer = ChatHistoryTruncationReducer(target_count=1)
             
             group_chat = AgentGroupChat(
-                agents=[agent_summarizer,agent_evaluator,  agent_teacher],
+                agents=[summarizer_agent,agent_evaluator,  agent_teacher],
                 selection_strategy=KernelFunctionSelectionStrategy(
-                    initial_agent=agent_summarizer,
+                    initial_agent=summarizer_agent,
                     kernel = kernel,
                     function=selection_function,
                     result_parser=lambda result: str(result.value[0]).strip() if result.value[0] is not None else SUMMARIZER_NAME,

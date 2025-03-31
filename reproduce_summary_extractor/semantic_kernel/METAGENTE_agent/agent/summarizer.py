@@ -1,18 +1,31 @@
-from string import Template
-from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
+from semantic_kernel.agents import ChatCompletionAgent
+from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
+from semantic_kernel.functions import KernelArguments
+from .base_agent import BaseAgentCreator 
 
+class SummarizerAgent(BaseAgentCreator):
+    """Agent for extracting information based on a prompt template."""
 
-class SummarizerAgent:
     def __init__(self):
-        self.llm = OpenAIChatProvider(model="gpt-4o-mini")
-        # self.llm = OllamaChatProvider(model="llama3.2")
+        """Initializes the Agent with specific settings."""
+        super().__init__() 
+        self.settings = OpenAIChatPromptExecutionSettings(
+            service_id="summarizer",
+            ai_model_id="gpt-4o-mini",
+            temperature=0,
+        )
 
-    def _build_prompt(self, prompt: str, extracted_text: str) -> str:
-        prompt = Template(prompt)
-        prompt = prompt.substitute(extracted_text=extracted_text)
-        return prompt
-
-    async def run(self, prompt: str, extracted_text: str) -> str:
-        prompt = self._build_prompt(prompt, extracted_text)
-        about = await self.llm.run(prompt, temperature=0)
-        return about
+    def create_agent(self, file_path: str, extracted_text: str) -> ChatCompletionAgent:
+        """Creates a ChatCompletionAgent for extraction."""
+        # Create instruction  prompt
+        prompt_template = self._prompt_template(file_path)
+        # Add chat completion to kernel
+        self._add_chat_completion_kernel("summarizer")
+        # Create Agent
+        agent_summarizer = ChatCompletionAgent(
+            kernel=self.kernel,
+            name="summarizer",
+            prompt_template_config=prompt_template,
+            arguments=KernelArguments(extracted_text=extracted_text, settings= self.settings),
+        )
+        return agent_summarizer

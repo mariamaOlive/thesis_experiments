@@ -8,6 +8,7 @@ class ExtractorAgent(BaseAgentCreator):
 
     def __init__(self):
         """Initializes the ExtractorAgent with specific settings."""
+        super().__init__() 
         self.settings = OpenAIChatPromptExecutionSettings(
             service_id="extractor",
             ai_model_id="gpt-4o-mini",
@@ -16,12 +17,16 @@ class ExtractorAgent(BaseAgentCreator):
 
     def create_agent(self, file_path: str) -> ChatCompletionAgent:
         """Creates a ChatCompletionAgent for extraction."""
+        # Create instruction  prompt
         prompt_template = self._prompt_template(file_path)
-
+        # Add chat completion to kernel
+        self._add_chat_completion_kernel("extractor")
+        # Create Agent
         agent_extractor = ChatCompletionAgent(
-            kernel=self._create_kernel_with_chat_completion("extractor"),
+            kernel=self.kernel,
             name="extractor",
             prompt_template_config=prompt_template,
             arguments=KernelArguments(settings=self.settings),
         )
         return agent_extractor
+    

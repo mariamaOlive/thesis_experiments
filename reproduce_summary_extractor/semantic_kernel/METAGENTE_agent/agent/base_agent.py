@@ -7,11 +7,13 @@ import yaml
 class BaseAgentCreator:
     """Base class for creating agents with common kernel and prompt template setup."""
 
-    def _create_kernel_with_chat_completion(self, service_id: str) -> Kernel:
+    def __init__(self):
+        """Initializes the agent creator with a kernel and service."""
+        self.kernel = Kernel()
+
+    def _add_chat_completion_kernel(self, service_id: str) -> Kernel:
         """Creates a kernel with a chat completion service."""
-        kernel = Kernel()
-        kernel.add_service(OpenAIChatCompletion(service_id=service_id))
-        return kernel
+        self.kernel.add_service(OpenAIChatCompletion(service_id=service_id))
 
     def _prompt_template(self, file_path: str) -> PromptTemplateConfig:
         """Reads a YAML file and creates a PromptTemplateConfig."""
@@ -21,3 +23,7 @@ class BaseAgentCreator:
         data = yaml.safe_load(generate_story_yaml)
         prompt_template_config = PromptTemplateConfig(**data)
         return prompt_template_config
+    
+    def add_plugin_kernel(self, name, plugin):
+        """Adds plugin to kernel"""
+        self.kernel.add_plugin(plugin, plugin_name=name)

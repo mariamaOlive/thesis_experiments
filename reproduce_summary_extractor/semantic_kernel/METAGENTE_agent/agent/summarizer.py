@@ -16,7 +16,7 @@ class SummarizerAgent(BaseAgentCreator):
         )
 
     def create_agent(self, file_path: str, extracted_text: str) -> ChatCompletionAgent:
-        """Creates a ChatCompletionAgent for extraction."""
+        """Creates a ChatCompletionAgent for summarization."""
         # Create instruction  prompt
         prompt_template = self._prompt_template(file_path)
         # Add chat completion to kernel

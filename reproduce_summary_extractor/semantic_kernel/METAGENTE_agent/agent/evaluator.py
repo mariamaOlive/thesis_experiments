@@ -16,7 +16,7 @@ class EvaluatorAgent(BaseAgentCreator):
         )
 
     def create_agent(self, file_path: str, ground_truth: str) -> ChatCompletionAgent:
-        """Creates a ChatCompletionAgent for extraction."""
+        """Creates a ChatCompletionAgent for evaluation."""
         # Create instruction  prompt
         prompt_template = self._prompt_template(file_path)
         # Add chat completion to kernel

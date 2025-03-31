@@ -3,12 +3,6 @@ import re
 import logging
 
 from metric.rouge import ROUGE
-from prompt.prompt import (
-    COMBINE_PROMPT,
-    EXTRACTOR_PROMPT,
-    INITIAL_SUMMARIZER_PROMPT,
-    # TEACHER_PROMPT,
-)
 
 from agent.extractor import ExtractorAgent
 from agent.summarizer import SummarizerAgent
@@ -29,9 +23,6 @@ from semantic_kernel.functions import KernelArguments, KernelFunctionFromPrompt
 from semantic_kernel.contents import ChatHistory, ChatHistoryTruncationReducer
 from semantic_kernel.prompt_template import InputVariable, PromptTemplateConfig
 
-from semantic_kernel.agents.strategies import TerminationStrategy, KernelFunctionSelectionStrategy
-
-from pydantic import Field
 # logging.basicConfig(level=logging.INFO)
 
 class ParallelOptimizer:
@@ -42,11 +33,6 @@ class ParallelOptimizer:
         self.EVALUATOR_TEMPLATE_FILE = "template/evaluator.yaml"
         self.TEACHER_TEMPLATE_FILE = "template/teacher.yaml"
         self.COMBINE_TEMPLATE_FILE = "template/prompt_combine.yaml"
-        self.summarizer_prompt = INITIAL_SUMMARIZER_PROMPT
-        # self.extractor_agent = ExtractorAgent()
-        # self.summarizer_agent = SummarizerAgent()
-        # self.teacher_agent = TeacherAgent()
-        # self.prompt_combine = PromptCombineAgent()
         self.debug_result = {}
         self.threshold = threshold
         
@@ -143,26 +129,9 @@ class ParallelOptimizer:
         summarizer_list = PromptBuilder._clean_prompt_list(data_prompt)
         combine_agent_handler =  PromptCombineAgent(COMBINE_NAME)
         combine_agent = combine_agent_handler.create_agent(self.COMBINE_TEMPLATE_FILE, summarizer_list)
- 
-        
-        # Adding settings of the agent
-        # settings = OpenAIChatPromptExecutionSettings(
-        #                 service_id="Combiner",
-        #                 ai_model_id="gpt-4o",
-        #                 temperature=.7,
-        #             )
-        
-        # kernel_combiner = Kernel()
-        # kernel_combiner.add_service(OpenAIChatCompletion(ai_model_id="gpt-4o", service_id="Combiner"))
-        # # Create the agent
-        # agent_combiner = ChatCompletionAgent(
-        #         kernel = kernel_combiner,
-        #         name="Combiner", 
-        #         instructions=COMBINER_PROMPT,
-        #         arguments=KernelArguments(settings=settings)
-        #         )
         chat_combiner = ChatHistory()
         chat_combiner.add_user_message("Start task")
+        
         # Generate the agent response
         extracted_text = await combine_agent.get_response(chat)
         extracted_text = extracted_text.content

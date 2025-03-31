@@ -1,21 +1,27 @@
-from string import Template
-from utils.chat_kernel_provider import OpenAIChatProvider, OllamaChatProvider
+from semantic_kernel.agents import ChatCompletionAgent
+from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
+from semantic_kernel.functions import KernelArguments
+from .base_agent import BaseAgentCreator 
 
+class ExtractorAgent(BaseAgentCreator):
+    """Agent for extracting information based on a prompt template."""
 
-class ExtractorAgent:
     def __init__(self):
-        # self.llm = OpenAIChatProvider(model="gpt-4o-mini")
-        self.llm = OllamaChatProvider(model="llama3.2")
+        """Initializes the ExtractorAgent with specific settings."""
+        self.settings = OpenAIChatPromptExecutionSettings(
+            service_id="extractor",
+            ai_model_id="gpt-4o-mini",
+            temperature=0,
+        )
 
-    def _build_prompt(self, prompt: str, readme_text: str) -> str:
-        prompt = Template(prompt)
-        prompt = prompt.substitute(readme_text=readme_text)
-        print("############################")
-        print(prompt)
-        print("############################")
-        return prompt
+    def create_agent(self, file_path: str) -> ChatCompletionAgent:
+        """Creates a ChatCompletionAgent for extraction."""
+        prompt_template = self._prompt_template(file_path)
 
-    async def run(self, prompt: str, readme_text: str) -> str:
-        prompt = self._build_prompt(prompt, readme_text)
-        extracted_text = await self.llm.run(prompt,  temperature=0)
-        return extracted_text
+        agent_extractor = ChatCompletionAgent(
+            kernel=self._create_kernel_with_chat_completion("extractor"),
+            name="extractor",
+            prompt_template_config=prompt_template,
+            arguments=KernelArguments(settings=self.settings),
+        )
+        return agent_extractor

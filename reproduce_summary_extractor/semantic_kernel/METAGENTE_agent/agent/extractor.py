@@ -2,6 +2,7 @@ from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
 from semantic_kernel.functions import KernelArguments
 from .base_agent import BaseAgentCreator 
+from utils.prompt_builder import PromptBuilder
 
 class ExtractorAgent(BaseAgentCreator):
     """Agent for extracting information based on a prompt template."""
@@ -18,7 +19,7 @@ class ExtractorAgent(BaseAgentCreator):
     def create_agent(self, file_path: str) -> ChatCompletionAgent:
         """Creates a ChatCompletionAgent for extraction."""
         # Create instruction  prompt
-        prompt_template = self._prompt_template(file_path)
+        prompt_template = PromptBuilder.prompt_template(file_path)
         # Add chat completion to kernel
         self._add_chat_completion_kernel(self.name)
         # Create Agent

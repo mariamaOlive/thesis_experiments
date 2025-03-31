@@ -3,6 +3,8 @@ from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAICh
 from semantic_kernel.functions import KernelArguments
 from .base_agent import BaseAgentCreator 
 from utils.prompt_builder import PromptBuilder
+from semantic_kernel.connectors.ai.ollama import OllamaChatPromptExecutionSettings
+
 
 class TeacherAgent(BaseAgentCreator):
     """Agent for improving the prompt of the Summarizer."""
@@ -10,10 +12,15 @@ class TeacherAgent(BaseAgentCreator):
     def __init__(self, name):
         """Initializes the Agent with specific settings."""
         super().__init__(name) 
-        self.settings = OpenAIChatPromptExecutionSettings(
-            service_id=name,
-            ai_model_id="gpt-4o",
-            temperature=.7,
+        # self.settings = OpenAIChatPromptExecutionSettings(
+        #     service_id=name,
+        #     ai_model_id="gpt-4o",
+        #     temperature=.7,
+        # )
+        self.settings = OllamaChatPromptExecutionSettings(
+            service_id = name,
+            ai_model_id="llama3.2",
+            temperature=0,
         )
 
     def create_agent(self, file_path: str, ground_truth: str, extracted_text: str) -> ChatCompletionAgent:
@@ -21,7 +28,8 @@ class TeacherAgent(BaseAgentCreator):
         # Create instruction  prompt
         prompt_template = PromptBuilder.prompt_template(file_path)
         # Add chat completion to kernel
-        self._add_chat_completion_kernel(self.name)
+        # self._add_chat_completion_kernel(self.name)
+        self._add_chat_completion_kernel(self.name, "Ollma")
         # Create Agent
         agent = ChatCompletionAgent(
             kernel=self.kernel,

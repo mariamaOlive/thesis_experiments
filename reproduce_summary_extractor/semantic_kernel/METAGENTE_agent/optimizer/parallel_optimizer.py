@@ -1,8 +1,5 @@
 import os
-import re
 import logging
-
-from metric.rouge import ROUGE
 
 from agent.extractor import ExtractorAgent
 from agent.summarizer import SummarizerAgent
@@ -17,11 +14,10 @@ from utils.agent_functions import AgentFunctions
 
 
 from semantic_kernel import Kernel
-from semantic_kernel.agents import AgentGroupChat, ChatCompletionAgent
-from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
-from semantic_kernel.functions import KernelArguments, KernelFunctionFromPrompt
-from semantic_kernel.contents import ChatHistory, ChatHistoryTruncationReducer
-from semantic_kernel.prompt_template import InputVariable, PromptTemplateConfig
+from semantic_kernel.agents import AgentGroupChat
+from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion
+from semantic_kernel.contents import ChatHistory
+
 
 # logging.basicConfig(level=logging.INFO)
 

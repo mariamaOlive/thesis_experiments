@@ -11,11 +11,11 @@ class BaseAgentCreator:
         self.name = name
         self.kernel = Kernel()
 
-    def _add_chat_completion_kernel(self, service_id: str, type:str = "OpenAI") -> Kernel:
+    def _add_chat_completion_kernel(self, service_id: str, model_id: str = "gpt-4o-mini",type:str = "OpenAI") -> Kernel:
         """Creates a kernel with a chat completion service."""
         
         if type=='OpenAI':
-            self.kernel.add_service(OpenAIChatCompletion(service_id=service_id))
+            self.kernel.add_service(OpenAIChatCompletion(service_id=service_id, ai_model_id=model_id))
         else:
             self.kernel.add_service(OllamaChatCompletion(service_id=service_id, ai_model_id="llama3.2"))
     

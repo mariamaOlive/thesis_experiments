@@ -97,7 +97,7 @@ class ParallelOptimizer:
             group_chat = AgentGroupChat(
                 agents=[summarizer_agent,evaluator_agent,  teacher_agent],
                 selection_strategy=agent_functions.get_selection_function(summarizer_agent, teacher_agent, evaluator_agent),
-                termination_strategy=agent_functions.get_termination_function(evaluator_agent, description, 6),
+                termination_strategy=agent_functions.get_termination_function(evaluator_agent, description, max_iterations=30),
             )
             
             initial_summarizer_prompt = """
@@ -108,8 +108,9 @@ class ParallelOptimizer:
             
             # Start Conversation
             await group_chat.add_chat_message(message=initial_summarizer_prompt)
+            print("\n\nGroupChat: Summarizer - Evaluator - Teacher\n")
             async for content in group_chat.invoke():
-                print(f"# {content.name}: {content.content}")
+                print(f"# {content.name}: {content.content}\n")
             
             # Get best prompts
             if(prompt_plugin.best_rouge_score>.7):
@@ -118,7 +119,7 @@ class ParallelOptimizer:
             print("#############################################\n\n")
 
             print(f"Length data_prompt: {len(data_prompt)}")
-            if len(data_prompt)==2:
+            if len(data_prompt)==4:
                 break
             
         # Call Prompt Combiner

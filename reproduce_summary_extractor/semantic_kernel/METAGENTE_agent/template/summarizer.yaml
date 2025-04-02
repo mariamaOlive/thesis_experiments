@@ -10,8 +10,8 @@ template: |
   Read the instruction and the extracted README text carefully.
   Important:
   - Do not evaluate the quality of your output, make changes to the instruction, or initiate new prompts. Simply read the extracted README text and apply the latest instructions.
-  - Output only a short term or phrase that introduces the repository — do not include any explanation or formatting.
   - Do not calculate the ROUGE score.
+  - Output solely the summary based on the instruction provided on the chat. Do not output things like 'This is the summary:...'
   - Update the most recently generated summary using the output and the last instructions with the last message in the chat.  
 
 template_format: semantic-kernel

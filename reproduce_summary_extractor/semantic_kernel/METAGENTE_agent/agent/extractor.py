@@ -28,7 +28,7 @@ class ExtractorAgent(BaseAgentCreator):
         # Create instruction  prompt
         prompt_template = PromptBuilder.prompt_template(file_path)
         # Add chat completion to kernel
-        self._add_chat_completion_kernel(self.name, "Ollma")
+        self._add_chat_completion_kernel(self.name, model_id= "llama3.2", type= "Ollma")
         # Create Agent
         agent = ChatCompletionAgent(
             kernel=self.kernel,

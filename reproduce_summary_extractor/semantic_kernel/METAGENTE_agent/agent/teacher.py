@@ -12,24 +12,24 @@ class TeacherAgent(BaseAgentCreator):
     def __init__(self, name):
         """Initializes the Agent with specific settings."""
         super().__init__(name) 
-        # self.settings = OpenAIChatPromptExecutionSettings(
-        #     service_id=name,
-        #     ai_model_id="gpt-4o",
-        #     temperature=.7,
-        # )
-        self.settings = OllamaChatPromptExecutionSettings(
-            service_id = name,
-            ai_model_id="llama3.2",
-            temperature=0,
+        self.settings = OpenAIChatPromptExecutionSettings(
+            service_id=name,
+            ai_model_id="gpt-4o",
+            temperature=.7,
         )
+        # self.settings = OllamaChatPromptExecutionSettings(
+        #     service_id = name,
+        #     ai_model_id="llama3.2",
+        #     temperature=0.7,
+        # )
 
     def create_agent(self, file_path: str, ground_truth: str, extracted_text: str) -> ChatCompletionAgent:
         """Creates a ChatCompletionAgent for teacher"""
         # Create instruction  prompt
         prompt_template = PromptBuilder.prompt_template(file_path)
         # Add chat completion to kernel
-        # self._add_chat_completion_kernel(self.name)
-        self._add_chat_completion_kernel(self.name, "Ollma")
+        self._add_chat_completion_kernel(self.name, model_id="gpt-4o")
+        # self._add_chat_completion_kernel(self.name, "Ollma")
         # Create Agent
         agent = ChatCompletionAgent(
             kernel=self.kernel,

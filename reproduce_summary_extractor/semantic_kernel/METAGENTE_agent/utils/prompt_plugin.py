@@ -36,9 +36,8 @@ class PromptPlugin:
     async def set_last_summary(
         self,
         summary: Annotated[str, "The latest summary to store"]
-    ) -> Annotated[str, "Acknowledgement of update"]:
+    ):
         self.last_summary = summary
-        return "Last summary updated."
 
     @kernel_function(
         name="GetLastInstruction",
@@ -53,10 +52,9 @@ class PromptPlugin:
     )
     async def set_last_instruction(
         self,
-        instruction: Annotated[str, "New instruction to consider"]
-    ) -> Annotated[str, "Acknowledgement of update"]:
+        instruction: Annotated[str, "Latest instruction to consider"]
+    ):
         self.last_instruction = instruction
-        return "Last instruction updated."
 
     @kernel_function(
         name="UpdateBestInstruction",
@@ -66,9 +64,8 @@ class PromptPlugin:
         self,
         new_instruction: Annotated[str, "Candidate instruction to evaluate"],
         rouge_score: Annotated[float, "ROUGE score of the candidate instruction"]
-    ) -> Annotated[str, "Result of update attempt"]:
+    ):
         if rouge_score > self.best_rouge_score:
             self.best_instruction = new_instruction
             self.best_rouge_score = rouge_score
-            return f"Best instruction updated with ROUGE score {rouge_score:.4f}"
-        return f"ROUGE score {rouge_score:.4f} did not exceed the best score {self.best_rouge_score:.4f}"
+

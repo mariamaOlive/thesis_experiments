@@ -1,0 +1,7 @@
+path: "/rouge-score/<app_id>"
+method: "GET"
+extra:
+  python:
+    source: "endpoints/rouge-score.py"
+
+

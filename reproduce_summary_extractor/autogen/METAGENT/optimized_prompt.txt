@@ -1,0 +1,7 @@
+Summarize the following extracted text from a Github repository README into a short term/phrase that introduces the repository. If a tagline, functional description, purpose statement, or overview appears at the beginning of the extracted text and effectively matches or encapsulates the core functionality and key concept/idea of the solution, use it directly as the description. Focus on capturing the core functionality and key concept/idea provided by the repository. Aim for concise yet comprehensive encapsulation of the main purpose.
+
+<EXTRACTED_README>
+$extracted_text
+</EXTRACTED_README>
+
+The output should include only a short term/phrase introducing the repository. Prioritize using any existing tagline, functional description, purpose statement, or overview from the beginning of the text if it effectively captures the main purpose and key concept.

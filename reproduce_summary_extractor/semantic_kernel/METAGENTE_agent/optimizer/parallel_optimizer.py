@@ -130,7 +130,7 @@ class ParallelOptimizer:
         chat_combiner.add_user_message("Start task")
         
         # Generate the agent response
-        extracted_text = await combine_agent.get_response(chat)
+        extracted_text = await combine_agent.get_response(chat_combiner)
         extracted_text = extracted_text.content
         print(f"Extracted text: {extracted_text}")
             

@@ -23,6 +23,7 @@ from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermi
 
 from prompt.prompt import (
     INITIAL_SUMMARIZER_PROMPT,
+    EXTRACTOR_PROMPT
 )
 
 # logging.basicConfig(level=logging.INFO)
@@ -50,7 +51,6 @@ class ParallelOptimizer:
         EXTRACTOR_NAME = "Extractor"
         SUMMARIZER_NAME = "Summarizer"
         TEACHER_NAME = "Teacher"
-        EVALUATOR_NAME = "Evaluator"
         COMBINE_NAME = "Combiner"
         
         for i, data in enumerate(train_data):   
@@ -63,14 +63,8 @@ class ParallelOptimizer:
             print(f"Data #{i}:\n- Description: {description}")
             
             # Create Extractor Agent
-            extractor_agent_handler =  ExtractorAgent(EXTRACTOR_NAME)
-            extractor_agent = extractor_agent_handler.create_agent(self.EXTRACTOR_TEMPLATE_FILE)
-            # Create Chat Extractor
-            chat = ChatHistory()
-            chat.add_user_message(readme)
-            # Start Conversation Chat Extractor
-            extracted_text = await extractor_agent.get_response(chat)
-            extracted_text = extracted_text.content
+            extractor_agent =  ExtractorAgent(EXTRACTOR_NAME)
+            extracted_text = await extractor_agent.run_agent(EXTRACTOR_PROMPT, readme)
             print(f"Extracted text: {extracted_text}")
             
             
@@ -112,7 +106,7 @@ class ParallelOptimizer:
         chat_combiner.add_user_message("Start task")
         
         # Generate the agent response
-        extracted_text = await combine_agent.get_response(chat)
+        extracted_text = await combine_agent.get_response(chat_combiner)
         extracted_text = extracted_text.content
         print(f"Extracted text: {extracted_text}")
             

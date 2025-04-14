@@ -1,41 +1,43 @@
-from semantic_kernel.agents import ChatCompletionAgent
-from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
-from semantic_kernel.functions import KernelArguments
-from .base_agent import BaseAgentCreator 
-from utils.prompt_builder import PromptBuilder
-from semantic_kernel.connectors.ai.ollama import OllamaChatPromptExecutionSettings
+import os
+from string import Template
+from autogen_agentchat.agents import AssistantAgent
+from autogen_agentchat.messages import StructuredMessage, TextMessage
+from autogen_agentchat.ui import Console
+from autogen_core import CancellationToken
+from autogen_ext.models.openai import OpenAIChatCompletionClient
 
-class ExtractorAgent(BaseAgentCreator):
+
+class ExtractorAgent():
     """Agent for extracting information based on a prompt template."""
 
     def __init__(self, name):
-        """Initializes the ExtractorAgent with specific settings."""
-        super().__init__(name) 
-        self.settings = OpenAIChatPromptExecutionSettings(
-            service_id=name,
-            ai_model_id="gpt-4o-mini",
-            temperature=0,
+        self.name = name
+        # Create an agent that uses the OpenAI GPT-4o model.
+        model_client = OpenAIChatCompletionClient(
+            model= "gpt-4o-mini",
+            api_key= os.getenv('OPENAI_API_KEY'),
         )
-        
-        # self.settings = OllamaChatPromptExecutionSettings(
-        #     service_id = name,
-        #     ai_model_id="llama3.2",
-        #     temperature=0,
-        # )
+        self.agent = AssistantAgent(
+            name=name,
+            model_client=model_client,
+            # tools=[web_search],
+            system_message="Use tools to solve tasks.",
+        )
+       
+    def _build_prompt(self, prompt: str, readme_text: str) -> str:
+        prompt = Template(prompt)
+        prompt = prompt.substitute(readme_text=readme_text)
+        return prompt 
 
-    def create_agent(self, file_path: str) -> ChatCompletionAgent:
+    async def run_agent(self, prompt: str, readme_text) -> str:
         """Creates a ChatCompletionAgent for extraction."""
         # Create instruction  prompt
-        prompt_template = PromptBuilder.prompt_template(file_path)
-        # Add chat completion to kernel
-        self._add_chat_completion_kernel(self.name)
-        # self._add_chat_completion_kernel(self.name, model_id= "llama3.2", type= "Ollma") //Ollama
-        # Create Agent
-        agent = ChatCompletionAgent(
-            kernel=self.kernel,
-            name=self.name,
-            prompt_template_config=prompt_template,
-            arguments=KernelArguments(settings=self.settings),
+        prompt = self._build_prompt(prompt, readme_text)
+        response = await self.agent.on_messages(
+        [TextMessage(content=prompt, source="user")],
+        cancellation_token=CancellationToken(),
         )
-        return agent
+        response_text = response.chat_message.content
+        print(f"[{self.name} sent]: {response_text}\n")
+        return response_text
     

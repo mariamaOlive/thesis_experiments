@@ -20,7 +20,6 @@ class ExtractorAgent():
         self.agent = AssistantAgent(
             name=name,
             model_client=model_client,
-            # tools=[web_search],
             system_message="Use tools to solve tasks.",
         )
        
@@ -33,6 +32,7 @@ class ExtractorAgent():
         """Creates a ChatCompletionAgent for extraction."""
         # Create instruction  prompt
         prompt = self._build_prompt(prompt, readme_text)
+        # Send prompt to agent
         response = await self.agent.on_messages(
         [TextMessage(content=prompt, source="user")],
         cancellation_token=CancellationToken(),

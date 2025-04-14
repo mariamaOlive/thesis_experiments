@@ -1,32 +1,63 @@
-from semantic_kernel.agents import ChatCompletionAgent
-from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion, OpenAIChatPromptExecutionSettings
-from semantic_kernel.functions import KernelArguments
-from .base_agent import BaseAgentCreator 
-from utils.prompt_builder import PromptBuilder
+import os
+import re
+from string import Template
+from autogen_agentchat.agents import AssistantAgent
+from autogen_agentchat.messages import StructuredMessage, TextMessage
+from autogen_agentchat.ui import Console
+from autogen_core import CancellationToken
+from autogen_ext.models.openai import OpenAIChatCompletionClient
+from prompt.prompt import COMBINE_PROMPT
 
-class PromptCombineAgent(BaseAgentCreator):
-    """Agent for combining prompts"""
+class PromptCombineAgent():
+    """Agent for combining prompts into a single one."""
 
     def __init__(self, name):
-        """Initializes the Agent with specific settings."""
-        super().__init__(name) 
-        self.settings = OpenAIChatPromptExecutionSettings(
-            service_id=name,
-            ai_model_id="gpt-4o",
-            temperature=0.7,
+        self.name = name
+        # Create an agent that uses the OpenAI GPT-4o model.
+        model_client = OpenAIChatCompletionClient(
+            model= "gpt-4o",
+            api_key= os.getenv('OPENAI_API_KEY'),
+        )
+        self.agent = AssistantAgent(
+            name=name,
+            model_client=model_client,
+            system_message="Use tools to solve tasks.",
         )
 
-    def create_agent(self, file_path: str, summarizer_list: str) -> ChatCompletionAgent:
-        """Creates a ChatCompletionAgent for summarization."""
+
+    def _build_prompt(self, summarizer_list: str) -> str:
+        prompt = Template(COMBINE_PROMPT)
+        prompt = prompt.substitute(summarizer_list=summarizer_list)
+        return prompt
+
+
+    def _parse_answer(self, answer: str) -> tuple[str, str]:
+        summarizer_prompt = answer
+        if "$extracted_text" not in summarizer_prompt:
+            summarizer_prompt = re.sub(
+                r"\btext\b", "$extracted_text", summarizer_prompt, count=1
+            )
+        return summarizer_prompt
+
+
+    def _clean_prompt_list(self, prompt_list: list) -> list:
+        ret = ""
+        for i, prompt in enumerate(prompt_list):
+            ret += f"Extractor Prompts #{i}:\n{prompt}"
+        return ret
+
+
+    async def run_agent(self, prompt_list: list) -> tuple[str, str]:
+        """Creates a ChatCompletionAgent for extraction."""
         # Create instruction  prompt
-        prompt_template = PromptBuilder.prompt_template(file_path)
-        # Add chat completion to kernel
-        self._add_chat_completion_kernel(self.name)
-        # Create Agent
-        agent = ChatCompletionAgent(
-            kernel=self.kernel,
-            name=self.name,
-            prompt_template_config=prompt_template,
-            arguments=KernelArguments(summarizer_list=summarizer_list, settings= self.settings),
+        summarizer_list = self._clean_prompt_list(prompt_list)
+        prompt = self._build_prompt(summarizer_list=summarizer_list)
+        # Send prompt to agent
+        response = await self.agent.on_messages(
+        [TextMessage(content=prompt, source="user")],
+        cancellation_token=CancellationToken(),
         )
-        return agent
+        response_text = response.chat_message.content
+        print(f"[{self.name} sent]: {response_text}\n")
+        return response_text
+    

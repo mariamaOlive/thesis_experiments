@@ -1,4 +1,4 @@
-Summarize the following extracted text from a Github repository README into a short term/phrase. If the extracted text includes an existing tagline, functional description, purpose statement, or overview, prioritize using it directly in your summary. Ensure that the summary closely matches such elements if they are present:
+Summarize the following extracted text from a Github repository README into a short term/phrase introducing the repository. If a tagline, functional description, purpose statement, or overview is identifiable at the beginning of the extracted text, prioritize using it verbatim as the short term/phrase.
 
 <EXTRACTED_README>
 $extracted_text
@@ -13,13 +13,13 @@ $extracted_text
  
 The output should include only a short term/phrase introducing the repository.
 
-Summarize the following extracted text from a GitHub repository README into a short term/phrase that introduces the repository. If a tagline, functional description, purpose statement, or overview appears at the beginning of the extracted text and effectively matches or encapsulates the core functionality and key concept/idea of the solution, use it directly as the description. Focus on capturing the core functionality and key concept/idea provided by the repository. Aim for concise yet comprehensive encapsulation of the main purpose.
+Summarize the following extracted text from a Github repository README into a short term/phrase. Prioritize using the existing tagline, functional description, purpose statement, or overview found at the beginning of the text when available.
 
 <EXTRACTED_README>
 $extracted_text
 </EXTRACTED_README>
 
-The output should include only a short term/phrase introducing the repository. Prioritize using any existing tagline, functional description, purpose statement, or overview from the beginning of the text if it effectively captures the main purpose and key concept.
+The output should be a concise term/phrase introducing the repository, reflecting its key concept or idea.
 
 Summarize the following extracted text from a Github repository README into a short term/phrase introducing the repository:
 <EXTRACTED_README>

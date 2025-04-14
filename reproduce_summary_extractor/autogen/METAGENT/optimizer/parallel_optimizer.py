@@ -3,7 +3,6 @@ import logging
 
 from agent.extractor import ExtractorAgent
 from agent.summarizer import SummarizerAgent
-from agent.evaluator import EvaluatorAgent
 from agent.teacher import TeacherAgent
 from agent.prompt_combine import PromptCombineAgent
 
@@ -62,7 +61,7 @@ class ParallelOptimizer:
             
             print(f"Data #{i}:\n- Description: {description}")
             
-            # Create Extractor Agent
+            # Create and run Extractor Agent
             extractor_agent =  ExtractorAgent(EXTRACTOR_NAME)
             extracted_text = await extractor_agent.run_agent(EXTRACTOR_PROMPT, readme)
             print(f"Extracted text: {extracted_text}")
@@ -98,16 +97,9 @@ class ParallelOptimizer:
             if len(data_prompt)==4:
                 break
             
-        # Call Prompt Combiner
-        summarizer_list = PromptBuilder._clean_prompt_list(data_prompt)
-        combine_agent_handler =  PromptCombineAgent(COMBINE_NAME)
-        combine_agent = combine_agent_handler.create_agent(self.COMBINE_TEMPLATE_FILE, summarizer_list)
-        chat_combiner = ChatHistory()
-        chat_combiner.add_user_message("Start task")
-        
-        # Generate the agent response
-        extracted_text = await combine_agent.get_response(chat_combiner)
-        extracted_text = extracted_text.content
+        # Create and run Prompt Combiner
+        combine_agent =  PromptCombineAgent(COMBINE_NAME)
+        extracted_text = await combine_agent.run_agent(data_prompt)
         print(f"Extracted text: {extracted_text}")
             
         # Show history of all best prompts

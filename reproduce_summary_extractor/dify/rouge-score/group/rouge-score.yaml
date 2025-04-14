@@ -1,0 +1,3 @@
+endpoints:
+  - endpoints/rouge-score.yaml
+

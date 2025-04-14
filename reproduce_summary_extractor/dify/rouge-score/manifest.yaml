@@ -1,0 +1,50 @@
+version: 0.0.1
+type: plugin
+author: m_oliveira
+name: rouge-score
+label:
+  en_US: rouge-score
+  ja_JP: rouge-score
+  zh_Hans: rouge-score
+  pt_BR: rouge-score
+description:
+  en_US: Calculate rouge_l_score
+  ja_JP: Calculate rouge_l_score
+  zh_Hans: Calculate rouge_l_score
+  pt_BR: Calculate rouge_l_score
+icon: icon.svg
+resource:
+  memory: 268435456
+  permission:
+    tool:
+      enabled: true
+    model:
+      enabled: true
+      llm: true
+      text_embedding: false
+      rerank: false
+      tts: false
+      speech2text: false
+      moderation: false
+    endpoint:
+      enabled: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  endpoints:
+    - group/rouge-score.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+created_at: 2025-04-03T22:56:07.27391+02:00
+privacy: PRIVACY.md
+verified: false
